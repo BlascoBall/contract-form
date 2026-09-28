@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3f4f6; --card:#ffffff; --ink:#1f2430; --muted:#6b7280; --accent:#0f766e; --line:#d1d5db;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --bg:#15181d; --card:#1f232b; --ink:#e8eaed; --muted:#9aa1ab; --accent:#2dd4bf; --line:#3a4048; }
+  }
+  :root[data-theme="dark"]{ --bg:#15181d; --card:#1f232b; --ink:#e8eaed; --muted:#9aa1ab; --accent:#2dd4bf; --line:#3a4048; }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{
+    margin:0; background:var(--bg); color:var(--ink); font-family:'Sarabun',sans-serif;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:24px 16px 60px;}
+  h1{font-size:1.3rem; margin:0 0 4px;}
+  .sub{color:var(--muted); margin:0 0 20px; font-size:0.92rem;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:20px;}
+  .card h2{font-size:1.05rem; margin:0 0 14px; color:var(--accent);}
+  .grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px;}
+  .grid.full, .field.span2{grid-column:1/-1;}
+  @media (max-width:640px){ .grid{grid-template-columns:1fr;} }
+  label{display:block; font-size:0.85rem; color:var(--muted); margin-bottom:4px;}
+  input[type=text], input[type=number], select, textarea{
+    width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:8px;
+    background:transparent; color:var(--ink); font-family:inherit; font-size:0.98rem;
+  }
+  textarea{resize:vertical; min-height:70px;}
+  .radio-row{display:flex; gap:16px; flex-wrap:wrap; padding:6px 0;}
+  .radio-row label{display:flex; align-items:center; gap:6px; color:var(--ink); font-size:0.95rem; margin:0;}
+  .radio-row input{width:auto;}
+  .btnbar{display:flex; gap:10px; margin:18px 0 8px; flex-wrap:wrap;}
+  button{
+    font-family:inherit; font-size:0.95rem; padding:10px 18px; border-radius:9px; border:1px solid var(--accent);
+    background:var(--accent); color:#fff; cursor:pointer;
+  }
+  button.secondary{background:transparent; color:var(--accent);}
+  .note{font-size:0.82rem; color:var(--muted); line-height:1.5;}
+
+  /* --- Document preview --- */
+  #docCard{padding:0; overflow:visible;}
+  #docToolbar{display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid var(--line);}
+  #docToolbar h2{margin:0;}
+  #doc{
+    background:#fff; color:#111; font-family:'TH SarabunPSK','TH Sarabun New','Sarabun',sans-serif; font-size:16pt; line-height:1.0;
+    padding:15mm 20mm 4.4mm 30mm; max-width:210mm; margin:16px auto; box-shadow:0 0 0 1px var(--line); position:relative;
+  }
+  #doc *{font-size:16pt !important;}
+  #doc .center{text-align:center;}
+  #doc .b{font-weight:700;}
+  #doc p{margin:0 0 10pt;}
+  #doc .indent{text-indent:2em; page-break-inside:avoid;}
+  #doc .blank{border-bottom:1px dotted #111; padding:0 6px; white-space:nowrap; min-width:110px; display:inline-block;}
+  #doc .sign-block{margin-top:26pt; text-align:center;}
+  /* บล็อกลงนาม: "(ลงชื่อ)" เริ่มที่กึ่งกลางกระดาษ A4 (กึ่งกลางกระดาษ = กึ่งกลางพื้นที่เนื้อหา - 0.5cm เพราะขอบซ้าย 3cm ขวา 2cm; ขยับเพิ่ม 0.15cm กันตัวอักษรท้ายบรรทัดชิดขอบขวา)
+     ช่องลงชื่อกว้าง 110px x 1.75 = 192px / ชื่อและตำแหน่งจัดกึ่งกลางช่องลงชื่อ (ถ้ายาวเกิน 320px จะขึ้นบรรทัดใหม่ ไม่ล้นขอบ) */
+  #doc .sign-row{margin:20pt 0 0 5cm; display:grid; grid-template-columns:max-content 192px max-content; width:max-content; justify-content:start; row-gap:3pt; align-items:end; text-align:left; white-space:nowrap; page-break-inside:avoid; break-inside:avoid;}
+  #doc .sign-row .sig-line{border-bottom:1px dotted #111; height:1em;}
+  #doc .sign-row .sig-sub{grid-column:2; display:flex; justify-content:center;}
+  #doc .sign-row .sig-sub > span{flex:none; max-width:320px; text-align:center; white-space:normal;}
+  #doc .pagebreak{page-break-before:always; break-before:page;}
+  #doc h3.appendix{text-align:center; margin:20pt 0 8pt; page-break-after:avoid;}
+  #doc .crest-space{height:20mm; position:relative;}
+  #doc .contract-no{position:absolute; top:0; right:0; white-space:nowrap;}
+  #doc .pagenum{text-align:center; margin:0 0 20pt; page-break-after:avoid;}
+
+  @page{ size:A4; margin:1.5cm 2cm 0.44cm 3cm; }
+  @media print{
+    body{background:#fff;}
+    .wrap{max-width:none; padding:0;}
+    .card:not(#docCard){display:none !important;}
+    #docToolbar{display:none !important;}
+    #btnbar, #privacyNote{display:none !important;}
+    #doc{box-shadow:none; margin:0; padding:0; max-width:none; font-size:16pt; line-height:1.0;}
+    #doc *{font-size:16pt !important;}
+    h1,.sub{display:none;}
+  }
+
+  #doc .right{text-align:right;}
+  #doc .photo-wrap{position:relative; height:3.2cm; margin-bottom:6pt;}
+  #doc .photo-box{position:absolute; right:0; top:0; width:2.88cm; height:3.2cm; border:1px solid #111; display:flex; align-items:center; justify-content:center; text-align:center;}
+  #doc .sub-indent{padding-left:4em; text-indent:0;}
+  /* ฟอร์มนี้ต้องให้ข้อ ๑-๗ อยู่หน้า ๑ และข้อ ๘ ถึงช่องลงนามอยู่หน้า ๒ จึงลดช่องไฟระหว่างย่อหน้า/บล็อกลงนามลง */
+  #doc p{margin:0 0 2pt;}
+  #doc .pagenum{margin:0 0 8pt;}
+  #doc .photo-wrap{margin-bottom:0;}
+  #doc .sign-row{margin-top:9pt; row-gap:0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>แบบฟอร์มกรอกข้อมูลสัญญาจ้างลูกจ้างชั่วคราว</h1>
+  <p class="sub">โรงพยาบาลมะเร็งชลบุรี — กรอกข้อมูลด้านล่าง เอกสารสัญญาจะถูกจัดพิมพ์ให้อัตโนมัติ</p>
+
+  <div class="card">
+    <h2>ข้อมูลส่วนตัวลูกจ้าง</h2>
+    <div class="grid">
+      <div class="field"><label>คำนำหน้า</label><input type="text" id="prefix" placeholder="เช่น นาย, นาง, นางสาว, ว่าที่ร้อยตรี ฯลฯ"></div>
+      <div class="field"><label>ชื่อ-นามสกุล</label><input type="text" id="fullname" placeholder="เช่น ชาวี อัมราภรณ์"></div>
+      <div class="field"><label>อายุ (ปี)</label><input type="number" id="age" min="18" max="70"></div>
+      <div class="field"><label>เลขประจำตัวประชาชน (13 หลัก)</label><input type="text" id="idcard" maxlength="13" placeholder="0000000000000"></div>
+      <div class="field"><label>บ้านเลขที่</label><input type="text" id="houseno"></div>
+      <div class="field"><label>หมู่ที่</label><input type="text" id="moo"></div>
+      <div class="field"><label>ถนน</label><input type="text" id="road"></div>
+      <div class="field"><label>ซอย</label><input type="text" id="soi"></div>
+      <div class="field"><label>แขวง/ตำบล</label><input type="text" id="tambon"></div>
+      <div class="field"><label>เขต/อำเภอ</label><input type="text" id="amphoe"></div>
+      <div class="field"><label>จังหวัด</label><input type="text" id="province"></div>
+      <div class="field"><label>รหัสไปรษณีย์</label><input type="text" id="zip" maxlength="5"></div>
+      <div class="field span2"><label>โทรศัพท์</label><input type="text" id="phone"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>ข้อ ๑ ลักษณะงานที่จ้าง</h2>
+    <div class="grid">
+      <div class="field span2">
+        <label>๑.๑ ตำแหน่ง</label>
+        <select id="position"><option value="">-- เลือกตำแหน่ง --</option></select>
+      </div>
+      <div class="field span2">
+        <label>๑.๒ ปฏิบัติงานสังกัด</label>
+        <select id="unit"><option value="">-- เลือกสังกัด --</option></select>
+      </div>
+      <div class="field span2 note" id="fieldNote">๑.๓ ปฏิบัติงานด้าน: จะขึ้นอัตโนมัติตามตำแหน่งที่เลือก</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>ข้อ ๓ อัตราค่าจ้าง</h2>
+    <div class="radio-row">
+      <label><input type="radio" name="wagetype" value="monthly" checked> ลูกจ้างชั่วคราวรายเดือน</label>
+      <label><input type="radio" name="wagetype" value="hourly"> ลูกจ้างชั่วคราวรายคาบ (ชั่วโมงละ)</label>
+    </div>
+    <div class="grid">
+      <div class="field span2">
+        <label>อัตราค่าจ้าง (บาท) — ไม่กรอกจะเว้นว่างให้เขียนด้วยลายมือ</label>
+        <input type="number" id="wage" min="0" step="1" placeholder="เช่น 15000">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>พยานคนที่ 1 (ผู้บังคับบัญชา)</h2>
+    <div class="grid">
+      <div class="field"><label>ชื่อ-นามสกุลผู้บังคับบัญชา</label><input type="text" id="supervisorName" placeholder="เช่น สมหญิง อัมราภรณ์"></div>
+      <div class="field"><label>ตำแหน่งผู้บังคับบัญชา</label><input type="text" id="supervisorPosition" placeholder="เช่น หัวหน้ากลุ่มงาน..."></div>
+    </div>
+  </div>
+
+  <div class="btnbar" id="btnbar">
+    <button onclick="renderDoc()">สร้าง / อัปเดตเอกสารสัญญา</button>
+    <button class="secondary" onclick="window.print()">พิมพ์เอกสาร</button>
+  </div>
+  <p class="note" id="privacyNote">ข้อมูลที่กรอกจะประมวลผลอยู่ในเบราว์เซอร์นี้เท่านั้น ไม่มีการบันทึกหรือส่งข้อมูลออกไปที่ใด เมื่อปิดหน้านี้ข้อมูลจะหายไป</p>
+
+  <div class="card" id="docCard">
+    <div id="docToolbar"><h2>ตัวอย่างเอกสารสัญญา (พร้อมพิมพ์)</h2><button onclick="window.print()">พิมพ์</button></div>
+    <div id="doc"></div>
+  </div>
+</div>
+
+<script>
+const DATA = {"positions": [["นักกายภาพบำบัด", "วิชาชีพเฉพาะ"], ["นักกิจกรรมบำบัด", "วิชาชีพเฉพาะ"], ["นักจิตวิทยาคลินิก", "วิชาชีพเฉพาะ"], ["ทันตแพทย์", "วิชาชีพเฉพาะ"], ["นักเทคนิคการแพทย์", "วิชาชีพเฉพาะ"], ["นายสัตวแพทย์", "วิชาชีพเฉพาะ"], ["พยาบาลวิชาชีพ", "วิชาชีพเฉพาะ"], ["นายแพทย์", "วิชาชีพเฉพาะ"], ["แพทย์แผนไทย", "วิชาชีพเฉพาะ"], ["เภสัชกร", "วิชาชีพเฉพาะ"], ["นักรังสีการแพทย์", "วิชาชีพเฉพาะ"], ["นักเวชศาสตร์สื่อความหมาย", "วิชาชีพเฉพาะ"], ["นักเทคโนโลยีหัวใจและทรวงอก", "วิชาชีพเฉพาะ"], ["นักฟิสิกส์การแพทย์", "วิชาชีพเฉพาะ"], ["นักทัศนมาตร", "วิชาชีพเฉพาะ"], ["นักสาธารณสุข", "วิชาชีพเฉพาะ"], ["นักกายอุปกรณ์", "วิชาชีพเฉพาะ"], ["วิศวกรไฟฟ้า", "วิชาชีพเฉพาะ"], ["แพทย์แผนจีน", "วิชาชีพเฉพาะ"], ["นักนิติวิทยาศาสตร์", "วิชาชีพเฉพาะ"], ["นักฟิสิกส์รังสี", "วิชาชีพเฉพาะ"], ["นักวิทยาศาสตร์", "วิชาชีพเฉพาะ"], ["นักจิตวิทยา", "วิชาชีพเฉพาะ"], ["นักโภชนาการ", "วิชาชีพเฉพาะ"], ["นักวิชาการสาธารณสุข", "วิชาชีพเฉพาะ"], ["นักอาชีวบำบัด", "วิชาชีพเฉพาะ"], ["นักวิชาการอาหารและยา", "วิชาชีพเฉพาะ"], ["นักวิทยาศาสตร์การแพทย์", "วิชาชีพเฉพาะ"], ["นักปฏิบัติการฉุกเฉินการแพทย์", "วิชาชีพเฉพาะ"], ["นักกำหนดอาหาร", "วิชาชีพเฉพาะ"], ["ช่างภาพการแพทย์", "วิชาชีพเฉพาะ"], ["นักวิชาการศึกษาพิเศษ", "วิชาชีพเฉพาะ"], ["นักสังคมสงเคราะห์", "วิชาชีพเฉพาะ"], ["นักวิชาการคอมพิวเตอร์", "วิชาชีพเฉพาะ"], ["นักจัดการงานทั่วไป", "สนับสนุน"], ["นักทรัพยากรบุคคล", "สนับสนุน"], ["นิติกร", "สนับสนุน"], ["นักวิเคราะห์นโยบายและแผน", "สนับสนุน"], ["นักเทคโนโลยีสารสนเทศ", "สนับสนุน"], ["นักวิชาการพัสดุ", "สนับสนุน"], ["นักวิชาการสถิติ", "สนับสนุน"], ["นักวิเทศสัมพันธ์", "สนับสนุน"], ["นักวิชาการเงินและบัญชี", "สนับสนุน"], ["นักวิชาการตรวจสอบภายใน", "สนับสนุน"], ["นักประชาสัมพันธ์", "สนับสนุน"], ["นักวิชาการเผยแพร่", "สนับสนุน"], ["นักวิชาการโสตทัศนศึกษา", "สนับสนุน"], ["นักวิชาการเกษตร", "สนับสนุน"], ["วิศวกร", "สนับสนุน"], ["บรรณารักษ์", "สนับสนุน"], ["นักวิชาการศึกษา", "สนับสนุน"], ["วิทยาจารย์", "สนับสนุน"], ["เจ้าพนักงานธุรการ", "สนับสนุน"], ["เจ้าพนักงานพัสดุ", "สนับสนุน"], ["เจ้าพนักงานเวชสถิติ", "สนับสนุน"], ["เจ้าพนักงานสถิติ", "สนับสนุน"], ["เจ้าพนักงานการเงินและบัญชี", "สนับสนุน"], ["เจ้าพนักงานเผยแพร่ประชาสัมพันธ์", "สนับสนุน"], ["เจ้าพนักงานโสตทัศนศึกษา", "สนับสนุน"], ["เจ้าพนักงานการเกษตร", "สนับสนุน"], ["เจ้าพนักงานทันตสาธารณสุข", "สนับสนุน"], ["เจ้าพนักงานเภสัชกรรม", "สนับสนุน"], ["โภชนากร", "สนับสนุน"], ["เจ้าพนักงานรังสีการแพทย์", "สนับสนุน"], ["เจ้าพนักงานวิทยาศาสตร์การแพทย์", "สนับสนุน"], ["เจ้าพนักงานสาธารณสุข", "สนับสนุน"], ["เจ้าพนักงานอาชีวบำบัด", "สนับสนุน"], ["เจ้าพนักงานเวชกิจฉุกเฉิน", "สนับสนุน"], ["เจ้าพนักงานการแพทย์แผนไทย", "สนับสนุน"], ["นายช่างศิลป์", "สนับสนุน"], ["ช่างกายอุปกรณ์", "สนับสนุน"], ["เจ้าพนักงานเครื่องคอมพิวเตอร์", "สนับสนุน"], ["ช่างทันตกรรม", "สนับสนุน"], ["นายช่างเทคนิค", "สนับสนุน"], ["นายช่างไฟฟ้า", "สนับสนุน"], ["นายช่างโยธา", "สนับสนุน"], ["ครูการศึกษาพิเศษ", "สนับสนุน"], ["เจ้าพนักงานห้องสมุด", "สนับสนุน"], ["พนักงานประจำตึก", "สนับสนุน"], ["พนักงานเปล", "สนับสนุน"], ["พนักงานซักฟอก", "สนับสนุน"], ["พนักงานบริการ", "สนับสนุน"], ["พนักงานรับโทรศัพท์", "สนับสนุน"], ["พนักงานเกษตรพื้นฐาน", "สนับสนุน"], ["พนักงานเรือยนต์", "สนับสนุน"], ["พนักงานบริการเอกสารทั่วไป", "สนับสนุน"], ["พนักงานเก็บเอกสาร", "สนับสนุน"], ["พนักงานบริการสื่ออุปกรณ์การสอน", "สนับสนุน"], ["พนักงานเก็บเงิน", "สนับสนุน"], ["พนักงานโสตทัศนศึกษา", "สนับสนุน"], ["พนักงานผลิตน้ำประปา", "สนับสนุน"], ["พนักงานการเงินและบัญชี", "สนับสนุน"], ["พนักงานพัสดุ", "สนับสนุน"], ["พนักงานธุรการ", "สนับสนุน"], ["พนักงานพิมพ์", "สนับสนุน"], ["พนักงานประเมินผล", "สนับสนุน"], ["พนักงานการศึกษา", "สนับสนุน"], ["พนักงานห้องสมุด", "สนับสนุน"], ["พนักงานสื่อสาร", "สนับสนุน"], ["ล่ามภาษาต่างประเทศ", "สนับสนุน"], ["ครูพี่เลี้ยง", "สนับสนุน"], ["พี่เลี้ยง", "สนับสนุน"], ["พนักงานช่วยการพยาบาล", "สนับสนุน"], ["พนักงานช่วยเหลือคนไข้", "สนับสนุน"], ["ผู้ช่วยพยาบาล", "สนับสนุน"], ["ผู้ช่วยทันตแพทย์", "สนับสนุน"], ["พนักงานเภสัชกรรม", "สนับสนุน"], ["พนักงานประจำห้องยา", "สนับสนุน"], ["ผู้ช่วยพนักงานสุขศึกษา", "สนับสนุน"], ["ผู้ช่วยเจ้าหน้าที่อนามัย", "สนับสนุน"], ["ผู้ช่วยเจ้าหน้าที่สาธารณสุข", "สนับสนุน"], ["พนักงานการแพทย์และรังสีเทคนิค", "สนับสนุน"], ["พนักงานจุลทัศนกร", "สนับสนุน"], ["พนักงานห้องผ่าตัด", "สนับสนุน"], ["พนักงานผ่าและรักษาศพ", "สนับสนุน"], ["พนักงานขับรถยนต์", "สนับสนุน"], ["พนักงานประกอบอาหาร", "สนับสนุน"], ["พนักงานพิธีสงฆ์", "สนับสนุน"], ["พนักงานบัตรรายงานโรค", "สนับสนุน"], ["พนักงานปฏิบัติการทดลองพาหะนำโรค", "สนับสนุน"], ["ผู้ช่วยนักกายภาพบำบัด", "สนับสนุน"], ["พนักงานกู้ชีพ", "สนับสนุน"], ["พนักงานประจำห้องทดลอง", "สนับสนุน"], ["พนักงานวิทยาศาสตร์", "สนับสนุน"], ["ช่างไฟฟ้าและอิเล็กทรอนิกส์", "สนับสนุน"], ["ช่างเหล็ก", "สนับสนุน"], ["ช่างฝีมือทั่วไป", "สนับสนุน"], ["ช่างต่อท่อ", "สนับสนุน"], ["ช่างศิลป์", "สนับสนุน"], ["ช่างตัดเย็บผ้า", "สนับสนุน"], ["ช่างตัดผม", "สนับสนุน"], ["ช่างซ่อมเครื่องทำความเย็น", "สนับสนุน"], ["ช่างเครื่องช่วยคนพิการ", "สนับสนุน"], ["ผู้ช่วยช่างทั่วไป", "สนับสนุน"]], "units": ["กลุ่มงานบริหารทั่วไป", "งานบริหารทั่วไป", "งานทรัพยากรบุคคล", "งานยุทธศาสตร์และแผนงาน", "งานการเงิน", "งานบัญชี", "งานพัสดุและบำรุงรักษา", "กลุ่มงานมะเร็งนรีเวช", "กลุ่มงานศัลยศาสตร์", "กลุ่มงานวิสัญญีวิทยา", "กลุ่มงานอายุรศาสตร์", "กลุ่มงานเคมีบำบัด", "กลุ่มงานโสต ศอ นาสิก", "กลุ่มงานรังสีรักษา", "กลุ่มงานรังสีวินิจฉัยและเวชศาสตร์นิวเคลียร์", "กลุ่มงานทันตกรรม", "กลุ่มงานพยาธิวิทยากายวิภาค", "กลุ่มงานพยาธิวิทยาคลินิกและเทคนิคการแพทย์", "กลุ่มงานเวชศาสตร์ประคับประคอง", "กลุ่มงานเภสัชกรรม", "กลุ่มงานโภชนศาสตร์", "กลุ่มงานสังคมสงเคราะห์ทางการแพทย์", "ภารกิจด้านการพยาบาล", "กลุ่มงานวิชาการพยาบาล", "งานวิจัยและพัฒนาการพยาบาล", "งานการพยาบาลส่งเสริมคุณภาพชีวิต", "งานการพยาบาลป้องกันและควบคุมการติดเชื้อ", "งานถ่ายทอดการพยาบาล", "กลุ่มงานการพยาบาลผู้ป่วยนอก", "งานการพยาบาลผู้ป่วยนอก", "งานการพยาบาลตรวจรักษาพิเศษ", "งานการพยาบาลผู้ป่วยนอกรังสีรักษา", "งานการพยาบาลผู้ป่วยนอกเคมีบำบัด", "งานการพยาบาลผู้ป่วยนอกศัลยกรรม", "กลุ่มงานการพยาบาลผู้ป่วยใน", "งานการพยาบาลผู้ป่วยผ่าตัด", "งานการพยาบาลผู้ป่วยวิสัญญี", "งานการพยาบาลผู้ป่วยในศัลยกรรม", "งานการพยาบาลผู้ป่วยหนัก", "หอผู้ป่วยสามัญหญิง", "หอผู้ป่วยสามัญชาย", "หอผู้ป่วยพิเศษ", "กลุ่มงานประกันสุขภาพ", "งานสารสนเทศทางการแพทย์", "งานทะเบียนมะเร็ง", "งานเวชระเบียน", "กลุ่มงานวิจัย ถ่ายทอด และสนับสนุนวิชาการ", "กลุ่มงานพัฒนาคุณภาพ", "กลุ่มงานพัฒนานโยบายและยุทธศาสตร์การแพทย์"]};
+const thaiDigitMap = {'0':'๐','1':'๑','2':'๒','3':'๓','4':'๔','5':'๕','6':'๖','7':'๗','8':'๘','9':'๙'};
+function toThaiDigits(str){ return str.replace(/[0-9]/g, d => thaiDigitMap[d]); }
+function val(id){ return document.getElementById(id).value.trim(); }
+function b(text){ return text ? text : '<span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+function thaiBahtText(numStr){
+  const n = parseFloat(String(numStr).replace(/,/g,''));
+  if(isNaN(n) || n < 0) return '';
+  const baht = Math.floor(n);
+  const satang = Math.round((n - baht) * 100);
+  const numText = ['ศูนย์','หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด','แปด','เก้า'];
+  const posText = ['','สิบ','ร้อย','พัน','หมื่น','แสน'];
+  function convertGroup(d){
+    let t = ''; const len = d.length;
+    for(let i=0;i<len;i++){
+      const digit = parseInt(d[i],10), pos = len - i - 1;
+      if(digit === 0) continue;
+      if(pos === 0 && digit === 1 && len > 1) t += 'เอ็ด';
+      else if(pos === 1 && digit === 2) t += 'ยี่สิบ';
+      else if(pos === 1 && digit === 1) t += 'สิบ';
+      else t += numText[digit] + posText[pos];
+    }
+    return t;
+  }
+  function convertInt(num){
+    if(num === 0) return 'ศูนย์';
+    let t = ''; const millions = Math.floor(num / 1000000), rest = num % 1000000;
+    if(millions > 0) t += convertInt(millions) + 'ล้าน';
+    if(rest > 0) t += convertGroup(String(rest));
+    return t;
+  }
+  return convertInt(baht) + 'บาท' + (satang > 0 ? convertGroup(String(satang)) + 'สตางค์' : 'ถ้วน');
+}
+
+// ---- dropdowns ----
+(function init(){
+  const ps = document.getElementById('position');
+  DATA.positions.forEach((p,i)=>{ const o=document.createElement('option'); o.value=String(i); o.textContent=p[0]; ps.appendChild(o); });
+  const us = document.getElementById('unit');
+  DATA.units.forEach(u=>{ const o=document.createElement('option'); o.value=u; o.textContent=u; us.appendChild(o); });
+})();
+function selectedPosition(){
+  const v = document.getElementById('position').value;
+  return v === '' ? null : DATA.positions[parseInt(v,10)];
+}
+
+function renderDoc(){
+  const sel = selectedPosition();
+  const positionText = sel ? sel[0] : '';
+  const fieldText = sel ? sel[1] : '';
+  document.getElementById('fieldNote').textContent = '๑.๓ ปฏิบัติงานด้าน: ' + (fieldText || 'จะขึ้นอัตโนมัติตามตำแหน่งที่เลือก');
+
+  const prefix = esc(val('prefix'));
+  const fullname = esc(val('fullname'));
+  const age = esc(val('age'));
+  const idcard = esc(val('idcard'));
+  const addr = `บ้านเลขที่ ${b(esc(val('houseno')))} หมู่ที่ ${b(esc(val('moo')))} ถนน ${b(esc(val('road')))} ซอย ${b(esc(val('soi')))} แขวง/ตำบล ${b(esc(val('tambon')))} เขต/อำเภอ ${b(esc(val('amphoe')))} จังหวัด ${b(esc(val('province')))} รหัสไปรษณีย์ ${b(esc(val('zip')))} โทรศัพท์ ${b(esc(val('phone')))}`;
+  const unit = esc(val('unit'));
+  const supervisorName = esc(val('supervisorName'));
+  const supervisorPosition = esc(val('supervisorPosition'));
+
+  const wageType = document.querySelector('input[name=wagetype]:checked').value;
+  const wageRaw = val('wage');
+  let wageNum = '', wageWords = '';
+  if(wageRaw && !isNaN(Number(wageRaw))){
+    wageNum = '<b>' + Number(wageRaw).toLocaleString('en-US') + '.-</b>';
+    wageWords = '<b>' + thaiBahtText(wageRaw) + '</b>';
+  }
+  const wageLine = wageType === 'monthly'
+    ? `ลูกจ้างชั่วคราวรายเดือน อัตรา ${b(wageNum)} บาท (${b(wageWords)})`
+    : `ลูกจ้างชั่วคราวรายคาบ อัตราชั่วโมงละ ${b(wageNum)} บาท (${b(wageWords)})`;
+  const employeeRole = wageType === 'monthly' ? 'ลูกจ้างชั่วคราวรายเดือน' : 'ลูกจ้างชั่วคราวรายคาบ';
+
+  const html = `
+    <div class="photo-wrap"><div class="photo-box"><div>รูปถ่าย<br>ขนาด 1 นิ้ว</div></div></div>
+    <p class="center b">สัญญาจ้างลูกจ้างชั่วคราวโรงพยาบาลมะเร็งชลบุรี</p>
+    <p class="right">สัญญาเลขที่ ${b('')}/${b('')}</p>
+    <p class="right">วันที่ ${b('')} เดือน ${b('')} พ.ศ. ${b('')}</p>
+
+    <p class="indent">สัญญาฉบับนี้ทำขึ้น ณ โรงพยาบาลมะเร็งชลบุรี ตั้งอยู่บ้านเลขที่ 300 หมู่ 2 ถนนพระยาสัจจา ตำบลเสม็ด อำเภอเมือง จังหวัดชลบุรี โดย <b>นางสาวอรวรรณ อนุไพรวรรณ</b> ตำแหน่งผู้อำนวยการโรงพยาบาลมะเร็งชลบุรี ซึ่งสัญญานี้เรียกว่า “โรงพยาบาลมะเร็งชลบุรี” ฝ่ายหนึ่ง กับ ${prefix}${b(fullname)} อายุ ${b(age)} ปี หมายเลขประจำตัวผู้ถือบัตรประจำตัวประชาชน ${b(idcard)} อยู่${addr} ซึ่งต่อไปในสัญญานี้เรียกว่า “ลูกจ้างชั่วคราว” อีกฝ่ายหนึ่ง ทั้งสองฝ่ายได้ตกลงทำสัญญาจ้างต่อกัน ดังต่อไปนี้</p>
+
+    <p class="indent"><b>ข้อ 1</b> ลักษณะงานที่จ้างตามรายละเอียด ดังต่อไปนี้</p>
+    <p class="sub-indent">1.1 ตำแหน่ง ${b(esc(positionText))}</p>
+    <p class="sub-indent">1.2 ปฏิบัติงานสังกัด ${b(unit)}</p>
+    <p class="sub-indent">1.3 ปฏิบัติงานด้าน ${b(fieldText)}</p>
+
+    <p class="indent"><b>ข้อ 2</b> ระยะเวลาการจ้าง มีกำหนด <b>1</b> ปี <b>-</b> เดือน <b>-</b> วัน เริ่มตั้งแต่วันที่ <b>1</b> เดือน <b>ตุลาคม</b> พ.ศ. <b>2569</b> และสิ้นสุดในวันที่ <b>30</b> เดือน <b>กันยายน</b> พ.ศ. <b>2570</b></p>
+    <p class="indent">กำหนดเวลาการมาปฏิบัติงานที่โรงพยาบาลมะเร็งชลบุรี ให้เป็นไปตามระเบียบกรมการแพทย์ว่าด้วยลูกจ้างชั่วคราว พ.ศ. 2550</p>
+
+    <p class="indent"><b>ข้อ 3</b> อัตราค่าจ้าง ดังนี้</p>
+    <p class="sub-indent">${wageLine}</p>
+
+    <p class="indent"><b>ข้อ 4</b> ลูกจ้างชั่วคราว ต้องเป็นผู้รับผิดชอบในการเสียภาษีเงินได้ และเงินประกันสังคม โดยโรงพยาบาลมะเร็งชลบุรีจะเป็นผู้หักไว้ ณ ที่จ่าย</p>
+
+    <p class="indent"><b>ข้อ 5</b> ลูกจ้างชั่วคราวยินยอมให้โรงพยาบาลมะเร็งชลบุรี เปลี่ยนแปลงหรือโยกย้ายตำแหน่งที่ หรือสถานที่ปฏิบัติงานได้ตามความเหมาะสม หรือตามวัตถุประสงค์ของโรงพยาบาลมะเร็งชลบุรี</p>
+
+    <p class="indent"><b>ข้อ 6</b> การจะได้รับการเพิ่มค่าจ้าง ปรับตำแหน่งระดับ ตลอดจนสวัสดิการและสิทธิประโยชน์อื่น ๆ ให้เป็นไปตามระเบียบกรมการแพทย์ ว่าด้วยลูกจ้างชั่วคราว พ.ศ. 2550 รวมทั้งกฎหมาย ระเบียบ ข้อบังคับ คำสั่งและมติอื่นๆ ที่เกี่ยวข้องกับลูกจ้างชั่วคราว</p>
+
+    <p class="indent"><b>ข้อ 7</b> โรงพยาบาลมะเร็งชลบุรี/กลุ่มงาน/ฝ่าย จะทำการประเมินผลการปฏิบัติงานของลูกจ้างชั่วคราวตามหลักเกณฑ์และวิธีการที่โรงพยาบาลมะเร็งชลบุรีกำหนด</p>
+
+    <div class="pagebreak"></div>
+    <p class="pagenum">-2-</p>
+    <p class="indent"><b>ข้อ 8</b> ลูกจ้างชั่วคราวปฏิบัติงานครบกำหนดเวลาจ้างตามสัญญานี้ ถ้าหากผลการปฏิบัติงานผ่านการประเมินตามหลักเกณฑ์ของโรงพยาบาลมะเร็งชลบุรี และโรงพยาบาลมะเร็งชลบุรี ได้อนุมัติให้ต่อสัญญาลูกจ้างชั่วคราวต่อไปอีกนั้น กำหนดระยะเวลาจ้างและอัตราจ้างในคราวนั้น ๆ ต่อไป โดยลูกจ้างชั่วคราวตกลงยินยอมและปฏิบัติงานให้เป็นไปตามที่กำหนดไว้ตามสัญญานี้ตลอดไปด้วย</p>
+
+    <p class="indent"><b>ข้อ 9</b> สัญญานี้สิ้นสุดลงเมื่อเข้ากรณีใดกรณีหนึ่ง ดังต่อไปนี้</p>
+    <p class="sub-indent">(1) โรงพยาบาลมะเร็งชลบุรี บอกเลิกสัญญา เมื่อผลการปฏิบัติงานไม่ผ่านการประเมินเพื่อต่อสัญญา</p>
+    <p class="sub-indent">(2) ตาย</p>
+    <p class="sub-indent">(3) ได้รับอนุญาตให้ลาออก</p>
+    <p class="sub-indent">(4) ครบกำหนดสัญญาจ้าง</p>
+
+    <p class="indent"><b>ข้อ 10</b> ลูกจ้างชั่วคราวต้องตั้งใจปฏิบัติงานด้วยความซื่อสัตย์ สุจริต และปฏิบัติงานอย่างเต็มกำลังความสามารถของตน ตลอดจนรักษาวินัยของลูกจ้างโดยเคร่งครัด และจะปฏิบัติงานตามระเบียบ ข้อบังคับ คำสั่ง และมติอื่น ๆ ของทางราชการที่เกี่ยวกับลูกจ้างชั่วคราว</p>
+
+    <p class="indent"><b>ข้อ 11</b> ในกรณีละทิ้งงานก่อนครบกำหนดเวลาตามข้อ 2 หรือปฏิบัติงานใด ๆ จนเป็นเหตุให้เกิดความเสียหายแก่โรงพยาบาลมะเร็งชลบุรี ในระหว่างสัญญา ลูกจ้างชั่วคราวยินยอมให้ชดใช้ค่าเสียหายให้แก่โรงพยาบาลมะเร็งชลบุรีทุกประการภายในกำหนดเวลาที่โรงพยาบาลมะเร็งชลบุรีเรียกร้องให้ชดใช้ และยินยอมให้โรงพยาบาลมะเร็งชลบุรีหักค่าจ้างหรือเงินอื่นใดที่ลูกจ้างชั่วคราวมีสิทธิได้รับจากโรงพยาบาลมะเร็งชลบุรี เป็นการชดใช้ค่าเสียหายไว้ เว้นแต่ความเสียหายนั้นเกิดจากเหตุสุดวิสัย</p>
+
+    <p class="indent"><b>ข้อ 12</b> สิทธิ หน้าที่และความรับผิดชอบ นอกเหนือจากที่กำหนดไว้ในสัญญาจ้างนี้ให้เป็นไปตามกฎหมายระเบียบ ข้อบังคับที่ทางราชการกำหนดไว้</p>
+
+    <p class="indent">สัญญานี้ทำขึ้นสองฉบับมีข้อความถูกต้องตรงกัน คู่สัญญาอ่าน ตรวจสอบ และเข้าใจข้อความในสัญญาโดยละเอียดแล้ว จึงลงลายมือชื่อไว้เป็นหลักฐานต่อหน้าพยาน ต่างฝ่ายต่างเก็บรักษาไว้ฝ่ายละหนึ่งฉบับ</p>
+
+    <div class="sign-row">
+      <span class="sig-label">(ลงชื่อ)</span><span class="sig-line"></span><span class="sig-role"></span>
+      <div class="sig-sub"><span>(นางสาวอรวรรณ อนุไพรวรรณ)</span></div>
+      <div class="sig-sub"><span>ผู้อำนวยการโรงพยาบาลมะเร็งชลบุรี</span></div>
+    </div>
+    <div class="sign-row">
+      <span class="sig-label">(ลงชื่อ)</span><span class="sig-line"></span><span class="sig-role"></span>
+      <div class="sig-sub"><span>(${prefix}${b(fullname)})</span></div>
+      <div class="sig-sub"><span>${employeeRole}</span></div>
+    </div>
+    <div class="sign-row">
+      <span class="sig-label">(ลงชื่อ)</span><span class="sig-line"></span><span class="sig-role">พยาน</span>
+      <div class="sig-sub"><span>(${b(supervisorName)})</span></div>
+      ${supervisorPosition ? `<div class="sig-sub"><span>${supervisorPosition}</span></div>` : ''}
+    </div>
+    <div class="sign-row">
+      <span class="sig-label">(ลงชื่อ)</span><span class="sig-line"></span><span class="sig-role">พยาน</span>
+      <div class="sig-sub"><span>(นางสาวรวินท์อร ควะชาติ)</span></div>
+      <div class="sig-sub"><span>หัวหน้างานทรัพยากรบุคคล</span></div>
+    </div>
+  `;
+  document.getElementById('doc').innerHTML = toThaiDigits(html);
+}
+renderDoc();
+document.querySelectorAll('input,select,textarea').forEach(el=>{ el.addEventListener('input', renderDoc); el.addEventListener('change', renderDoc); });
+</script>
+</body>
+</html>

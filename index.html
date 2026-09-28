@@ -61,8 +61,12 @@
   #doc .indent{text-indent:2em; page-break-inside:avoid;}
   #doc .blank{border-bottom:1px dotted #111; padding:0 6px; white-space:nowrap; min-width:110px; display:inline-block;}
   #doc .sign-block{margin-top:26pt; text-align:center;}
-  #doc .sign-row{margin:26pt 0 0 38%; text-align:center; page-break-inside:avoid;}
-  #doc .sign-row p{margin:0 0 3pt;}
+  /* บล็อกลงนาม: "(ลงชื่อ)" เริ่มที่กึ่งกลางกระดาษ A4 (กึ่งกลางกระดาษ = กึ่งกลางพื้นที่เนื้อหา - 0.5cm เพราะขอบซ้าย 3cm ขวา 2cm; ขยับเพิ่ม 0.15cm กันตัวอักษรท้ายบรรทัดชิดขอบขวา)
+     ช่องลงชื่อกว้าง 110px x 1.75 = 192px / ชื่อและตำแหน่งจัดกึ่งกลางช่องลงชื่อ (ถ้ายาวเกิน 320px จะขึ้นบรรทัดใหม่ ไม่ล้นขอบ) */
+  #doc .sign-row{margin:26pt 0 0 calc(50% - 0.65cm); display:grid; grid-template-columns:max-content 192px max-content; width:max-content; justify-content:start; row-gap:3pt; align-items:end; text-align:left; white-space:nowrap; page-break-inside:avoid; break-inside:avoid;}
+  #doc .sign-row .sig-line{border-bottom:1px dotted #111; height:1em;}
+  #doc .sign-row .sig-sub{grid-column:2; display:flex; justify-content:center;}
+  #doc .sign-row .sig-sub > span{flex:none; max-width:320px; text-align:center; white-space:normal;}
   #doc .pagebreak{page-break-before:always; break-before:page;}
   #doc h3.appendix{text-align:center; margin:20pt 0 8pt; page-break-after:avoid;}
   #doc .crest-space{height:20mm; position:relative;}
@@ -352,24 +356,25 @@ function renderDoc(){
     <p class="indent">สัญญานี้ทำขึ้นสองฉบับมีข้อความถูกต้องตรงกัน คู่สัญญาอ่าน ตรวจสอบและเข้าใจข้อความในสัญญาโดยละเอียดแล้ว จึงลงลายมือไว้เป็นหลักฐานต่อหน้าพยาน ณ วัน เดือน ปี ดังกล่าวข้างต้น และต่างฝ่ายต่างเก็บรักษาไว้ฝ่ายละฉบับ</p>
 
     <div class="sign-row">
-      <p>(ลงชื่อ)${b('')}ผู้ว่าจ้าง</p>
-      <p>(นางสาวอรวรรณ อนุไพรวรรณ)</p>
-      <p>ผู้อำนวยการโรงพยาบาลมะเร็งชลบุรี</p>
-      <p>ปฏิบัติราชการแทน อธิบดีกรมการแพทย์</p>
+      <span class="sig-label">(ลงชื่อ)</span><span class="sig-line"></span><span class="sig-role">ผู้ว่าจ้าง</span>
+      <div class="sig-sub"><span>(นางสาวอรวรรณ อนุไพรวรรณ)</span></div>
+      <div class="sig-sub"><span>ผู้อำนวยการโรงพยาบาลมะเร็งชลบุรี</span></div>
+      <div class="sig-sub"><span>ปฏิบัติราชการแทน อธิบดีกรมการแพทย์</span></div>
     </div>
     <div class="sign-row">
-      <p>(ลงชื่อ)${b('')}พนักงานกระทรวงสาธารณสุข</p>
-      <p>(${prefix}${b(fullname)})</p>
+      <span class="sig-label">(ลงชื่อ)</span><span class="sig-line"></span><span class="sig-role"></span>
+      <div class="sig-sub"><span>(${prefix}${b(fullname)})</span></div>
+      <div class="sig-sub"><span>พนักงานกระทรวงสาธารณสุข</span></div>
     </div>
     <div class="sign-row">
-      <p>(ลงชื่อ)${b('')}พยาน</p>
-      <p>(${b(supervisorName)})</p>
-      ${supervisorPosition ? `<p>${supervisorPosition}</p>` : ''}
+      <span class="sig-label">(ลงชื่อ)</span><span class="sig-line"></span><span class="sig-role">พยาน</span>
+      <div class="sig-sub"><span>(${b(supervisorName)})</span></div>
+      ${supervisorPosition ? `<div class="sig-sub"><span>${supervisorPosition}</span></div>` : ''}
     </div>
     <div class="sign-row">
-      <p>(ลงชื่อ)${b('')}พยาน</p>
-      <p>(นางสาวรวินท์อร ควะชาติ)</p>
-      <p>หัวหน้างานทรัพยากรบุคคล</p>
+      <span class="sig-label">(ลงชื่อ)</span><span class="sig-line"></span><span class="sig-role">พยาน</span>
+      <div class="sig-sub"><span>(นางสาวรวินท์อร ควะชาติ)</span></div>
+      <div class="sig-sub"><span>หัวหน้างานทรัพยากรบุคคล</span></div>
     </div>
 
     <div class="pagebreak"></div>

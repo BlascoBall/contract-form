@@ -80,6 +80,7 @@
     .card:not(#docCard){display:none !important;}
     #docToolbar{display:none !important;}
     #btnbar, #privacyNote{display:none !important;}
+    #docCard{border:none !important; padding:0 !important; background:transparent !important; border-radius:0 !important; margin:0 !important; box-shadow:none !important;}
     #doc{box-shadow:none; margin:0; padding:0; max-width:none; font-size:16pt; line-height:1.0;}
     #doc *{font-size:16pt !important;}
     h1,.sub{display:none;}
@@ -112,8 +113,8 @@
       </div>
       <div class="field"><label>บ้านเลขที่</label><input type="text" id="houseno"></div>
       <div class="field"><label>หมู่ที่</label><input type="text" id="moo"></div>
-      <div class="field"><label>ถนน</label><input type="text" id="road" value="-" ></div>
-      <div class="field"><label>ซอย</label><input type="text" id="soi" value="-" ></div>
+      <div class="field"><label>ถนน</label><input type="text" id="road"></div>
+      <div class="field"><label>ซอย</label><input type="text" id="soi"></div>
       <div class="field"><label>แขวง/ตำบล</label><input type="text" id="tambon"></div>
       <div class="field"><label>เขต/อำเภอ</label><input type="text" id="amphoe"></div>
       <div class="field"><label>จังหวัด</label><input type="text" id="province"></div>
@@ -138,7 +139,7 @@
         </select>
       </div>
       <div class="field">
-        <label>อัตราค่าจ้าง (บาท/เดือน) ค่าจ้างก่อนหักค่าใช้จ่ายล่าสุด </label>
+        <label>อัตราค่าจ้าง (บาท/เดือน)</label>
         <input type="number" id="wage" min="0" step="1" placeholder="เช่น 30000">
       </div>
       <div class="field span2 note">ระยะเวลาจ้าง: 1 ตุลาคม 2569 – 30 กันยายน 2570 (1 ปี) — กำหนดไว้แล้วสำหรับรอบสัญญานี้ หากไม่กรอกค่าจ้าง ช่องนี้จะเว้นว่างให้กรอกด้วยลายมือ</div>
@@ -171,7 +172,7 @@
       </div>
       <div class="field">
         <label>ตำแหน่งผู้บังคับบัญชา</label>
-        <input type="text" id="supervisorPosition" placeholder="เช่น พยาบาลวิชาชีพชำนาญการพิเศษ ">
+        <input type="text" id="supervisorPosition" placeholder="เช่น หัวหน้ากลุ่มงาน...">
       </div>
     </div>
   </div>
@@ -306,7 +307,7 @@ function renderDoc(){
     <div class="crest-space"><div class="contract-no">สัญญาเลขที่ ${b('')}/${b('')}</div></div>
     <p class="center b" style="font-size:16pt;">สัญญาจ้าง<br>พนักงานกระทรวงสาธารณสุขทั่วไป<br>กรมการแพทย์ โรงพยาบาลมะเร็งชลบุรี</p>
 
-    <p class="indent">สัญญาจ้างพนักงานกระทรวงสาธารณสุขฉบับนี้ทำขึ้น ณ <b>โรงพยาบาลมะเร็งชลบุรี</b><br>เมื่อวันที่ <b>30</b> เดือน<b> กันยายน </b>พ.ศ. <b>2569</b> ระหว่าง<b> กรมการแพทย์ </b> โดย <b>นางสาวอรวรรณ อนุไพรวรรณ</b> ตำแหน่ง <b>ผู้อำนวยการโรงพยาบาลมะเร็งชลบุรี</b> ผู้รับมอบอำนาจตามคำสั่ง<b>กรมการแพทย์</b> ที่ <b>1209/2563</b> ลงวันที่ <b>19 มิถุนายน 2563</b> ซึ่งต่อไปในสัญญานี้เรียกว่า<b> "กรม" </b>ฝ่ายหนึ่งกับ<br><b> ${prefix}${b(fullname)}</b> อายุ ${b(age)} ปี <br>หมายเลขประจำตัวของผู้ถือบัตรประจำตัวประชาชน ${b(idcard)} <br> ${addr} ซึ่งต่อไปในสัญญานี้เรียกว่า "พนักงานกระทรวงสาธารณสุข" อีกฝ่ายหนึ่ง ทั้งสองฝ่ายต่างได้ตกลงร่วมกันทำสัญญาจ้างไว้ต่อกันดังต่อไปนี้</p>
+    <p class="indent">สัญญาจ้างพนักงานกระทรวงสาธารณสุขฉบับนี้ทำขึ้น ณ <b>โรงพยาบาลมะเร็งชลบุรี</b><br>เมื่อวันที่ <b>30</b> เดือน<b> กันยายน </b>พ.ศ. <b>2569</b> ระหว่าง<b> กรมการแพทย์ </b> โดย <b>นางสาวอรวรรณ อนุไพรวรรณ</b> ตำแหน่ง <b>ผู้อำนวยการโรงพยาบาลมะเร็งชลบุรี</b> ผู้รับมอบอำนาจตามคำสั่ง<b>กรมการแพทย์</b> ที่ <b>1209/2563</b> ลงวันที่ <b>19 มิถุนายน 2563</b> ซึ่งต่อไปในสัญญานี้เรียกว่า<b> "กรม" </b>ฝ่ายหนึ่งกับ<b> ${prefix}${b(fullname)}</b><br> อายุ ${b(age)} ปี หมายเลขประจำตัวของผู้ถือบัตรประจำตัวประชาชน ${b(idcard)} ${addr} ซึ่งต่อไปในสัญญานี้เรียกว่า "พนักงานกระทรวงสาธารณสุข" อีกฝ่ายหนึ่ง ทั้งสองฝ่ายต่างได้ตกลงร่วมกันทำสัญญาจ้างไว้ต่อกันดังต่อไปนี้</p>
 
     <p class="indent"><b>ข้อ ๑</b> กรมตกลงจ้างและพนักงานกระทรวงสาธารณสุขตกลงรับจ้างทำงานให้แก่กรมโดยเป็นพนักงานกระทรวงสาธารณสุขทั่วไปดังต่อไปนี้</p>
     <p class="indent">กลุ่มงาน &nbsp;<b>${group}</b></p>
